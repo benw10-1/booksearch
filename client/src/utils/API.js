@@ -1,11 +1,64 @@
-// route to get logged in user's info (needs the token)
-export const getMe = (token) => {
-  return fetch('/api/users/me', {
+import Auth from "./auth";
+
+function genQuery(q, v) {
+  const url = "/graphql";
+
+  const body = {
+    "query": q,
+    "variables": v
+  }
+
+  const token = Auth.getToken();
+
+  if (token && Auth.isTokenExpired(token)) {
+    Auth.logout();
+    return
+  }
+
+  const opt = {
+    method: "POST",
+    mode: "cors",
+    credentials: "same-origin",
     headers: {
-      'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "authorization": token ? `Bearer ${token}` : ''
     },
+    referrerPolicy: 'no-referrer',
+    body: JSON.stringify(body)
+  }
+
+  return fetch(url, opt).then(res => res.json()).then(res => {
+    if (res.errors) {
+      console.log(res.errors);
+    }
+    return res;
+  }).catch(err => {
+    console.log(err);
   });
+}
+
+// route to get logged in user's info (needs the token)
+export const getMe = () => {
+
+  const q = `
+    query {
+      me {
+        _id
+        username
+        email
+        savedBooks {
+          bookId
+          title
+          authors
+          description
+          link
+          image
+        }
+      }
+    }
+  `;
+
+  return genQuery(q, {});
 };
 
 export const createUser = (userData) => {
