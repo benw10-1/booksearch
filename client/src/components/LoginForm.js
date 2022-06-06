@@ -32,7 +32,12 @@ const LoginForm = () => {
         throw new Error('something went wrong!');
       }
 
-      const { token, user } = await response;
+      const { token, user } = response;
+
+      if (!user) {
+        throw new Error('something went wrong!');
+      }
+
       console.log(user);
       Auth.login(token);
     } catch (err) {

@@ -29,10 +29,14 @@ class AuthService {
 
   getToken() {
     // Retrieves the user token from localStorage
-    return localStorage.getItem('id_token');
+    return localStorage.getItem('id_token') === 'undefined' ? '' : localStorage.getItem('id_token');
   }
 
   login(idToken) {
+    if (!idToken || idToken === 'undefined') {
+      console.log("No token found");
+      return false;
+    }
     // Saves user token to localStorage
     localStorage.setItem('id_token', idToken);
     window.location.assign('/');

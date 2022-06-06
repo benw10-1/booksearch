@@ -26,7 +26,7 @@ const SavedBooks = () => {
           throw new Error('something went wrong!');
         }
 
-        const user = await response;
+        const user = response;
         setUserData(user);
       } catch (err) {
         console.error(err);
@@ -51,7 +51,7 @@ const SavedBooks = () => {
         throw new Error('something went wrong!');
       }
 
-      const updatedUser = await response;
+      const updatedUser = response;
       setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
