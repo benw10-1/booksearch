@@ -1,6 +1,6 @@
 const { User } = require('../../models');
 
-function me(parent, args, context, info) {
+async function me(parent, args, context, info) {
     if (!context.user) throw new Error('You must be logged in to do that'); 
 
     const user = await User.findById(context.user._id)

@@ -30,8 +30,15 @@ function genQuery(q, v) {
   return fetch(url, opt).then(res => res.json()).then(res => {
     if (res.errors) {
       console.log(res.errors);
+      return {
+        error: res.errors[0].message
+      }
     }
-    return res?.data ?? res;
+
+    return {
+      ...res.data,
+      ok: true
+    }
   }).catch(err => {
     console.log(err);
   });
@@ -57,7 +64,12 @@ export const getMe = () => {
     }
   `;
 
-  return genQuery(q, {});
+  return genQuery(q, {}).then(res => {
+    return {
+      ...res.me,
+      ok: true
+    };
+  });
 };
 
 export const createUser = (userData) => {
@@ -78,10 +90,10 @@ export const createUser = (userData) => {
     email: userData.email,
     password: userData.password
   }).then(res => {
-    if (res?.addUser?.token) {
-      Auth.login(res.addUser.token);
-    }
-    return res.addUser;
+    return {
+      ...res.addUser,
+      ok: true
+    };
   })
 };
 
@@ -102,10 +114,10 @@ export const loginUser = (userData) => {
     email: userData.email,
     password: userData.password
   }).then(res => {
-    if (res?.login?.token) {
-      Auth.login(res.login.token);
-    }
-    return res.login;
+    return {
+      ...res.login,
+      ok: true
+    };
   })
 };
 
@@ -132,8 +144,11 @@ export const saveBook = (bookData) => {
   return genQuery(q, {
     bookData: bookData
   }).then(res => {
-    return res.saveBook;
-  });
+    return {
+      ...res.saveBook,
+      ok: true
+    };
+  })
 };
 
 // remove saved book data for a logged in user
@@ -159,12 +174,15 @@ export const deleteBook = (bookId) => {
   return genQuery(q, {
     bookId: bookId
   }).then(res => {
-    return res.removeBook;
-  });
+    return {
+      ...res.removeBook,
+      ok: true
+    };
+  })
 };
 
 // make a search to google books api
 // https://www.googleapis.com/books/v1/volumes?q=harry+potter
 export const searchGoogleBooks = (query) => {
-  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`).then(res => res.json());
 };
